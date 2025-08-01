@@ -1,31 +1,32 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-
-// Dummy authentication and role check (replace with your real logic)
-const useAuth = () => {
-  // Example: get user from localStorage or context
-  const user = JSON.parse(localStorage.getItem("user"));
-  return user;
-};
+import { useAuth } from "../context/AuthContext";
 
 const PrivateRoutes = ({ allowedRoles }) => {
-  const user = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (!user) {
-    // Not logged in
     return <Navigate to="/login" replace />;
   }
 
-  // Check if allowedRoles matches user's role(s)
-  if (
-    (Array.isArray(allowedRoles) && allowedRoles.includes(user.role)) ||
-    allowedRoles === user.role
-  ) {
-    return <Outlet />;
+  // Check if user role is allowed
+  if (allowedRoles === "admins" && user.role !== "admin") {
+    return <Navigate to="/user/dashboard" replace />;
   }
 
-  // Not authorized
-  return <Navigate to="/login" replace />;
+  if (allowedRoles === "users" && user.role !== "user") {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoutes;
