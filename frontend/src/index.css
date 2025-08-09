@@ -2,7 +2,7 @@
 @import "tailwindcss";
 @theme{
   --font-display: "Poppins","sans-seriff";
-  --breakpoint-3xl: 1920pxl;
+  --breakpoint-3xl: 1920px;
   --color-primary: #1368EC;
 }
 @layer base{
